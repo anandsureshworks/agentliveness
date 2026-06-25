@@ -18,6 +18,8 @@
   *{box-sizing:border-box}
   body{margin:0;background:var(--s0);color:var(--t1);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
   .wrap{max-width:44rem;margin:0 auto;padding:2.4rem 1.25rem 4rem}
+  .skip-link{position:absolute;left:-999px;top:0;z-index:100;background:var(--accent);color:var(--s0);font-family:var(--mono);font-size:.8rem;padding:.5rem .9rem;border-radius:0 0 8px 0}
+  .skip-link:focus{left:0}
   a{color:var(--accent);text-decoration:none}
   a:hover{text-decoration:underline}
   .kicker{font-family:var(--mono);font-size:.74rem;color:var(--accent)}
@@ -79,7 +81,8 @@
 </style>
 </head>
 <body>
-<main class="wrap">
+<a class="skip-link" href="#main">Skip to content</a>
+<main class="wrap" id="main">
   <p class="kicker">&gt;_ agentliveness</p>
   <h1>Your scheduled agent can be dead for weeks while every check says it's fine.</h1>
   <p class="dek">A small, dependency-free reliability harness for scheduled / autonomous agent systems. It persists state across runs, proves <em>liveness</em> — not just freshness — fails loud, and scans for the failure class <em>before it ships.</em></p>
@@ -98,8 +101,8 @@
   <p>Under a scheduler — cron, launchd, a Kubernetes CronJob — <strong>every run is a fresh process.</strong> A counter initialized in <code>__init__</code> and held only in memory re-seeds to its starting value on every run. In a long-lived process it accumulates and everything looks right. In production it resets forever — and the <em>output keeps getting written</em>, so freshness checks pass with flying colors.</p>
   <figure>
     <div class="card">
-      <div class="tstrip" id="tstrip"></div>
-      <svg id="chart" viewBox="0 0 420 170" width="100%" style="max-width:440px"></svg>
+      <div class="tstrip" id="tstrip" aria-hidden="true"></div>
+      <svg id="chart" role="img" aria-label="Line chart across eight scheduled runs: the persisted counter climbs from 0 to 7, while the in-memory counter stays flat at 0 the entire time." viewBox="0 0 420 170" width="100%" style="max-width:440px"></svg>
       <div class="legend">
         <span><i style="background:var(--alive)"></i>persisted — accumulates 0→1→2…</span>
         <span><i style="background:var(--dead)"></i>in-memory — resets to 0 every run</span>
@@ -113,7 +116,7 @@
   <h2>The harness</h2>
   <p>Four composing primitives. The first three run in production; the fourth shifts left and catches the failure statically.</p>
   <figure>
-    <div class="card"><div class="pipe" id="pipe"></div></div>
+    <div class="card"><div class="pipe" id="pipe" role="img" aria-label="Pipeline: persist with PersistentState, detect with LivenessContract, respond with LoudFail, then audit statically with agentliveness audit."></div></div>
     <figcaption>persist → detect → respond → audit.</figcaption>
   </figure>
 
@@ -141,7 +144,7 @@ LoudFail(<span class="k">"my-agent"</span>, <span class="k">"~/.my-agent-loudfai
   <figure>
     <div class="card">
       <div class="signs" id="signs"></div>
-      <div class="verdict" id="verdict"></div>
+      <div class="verdict" id="verdict" role="status" aria-live="polite"></div>
       <label class="rtoggle"><input type="checkbox" id="restoreChk" /> restore it from disk <span class="dimm">(PersistentState)</span></label>
     </div>
     <figcaption>Flip the third sign — the verdict flips with it. No magic; just legible.</figcaption>
@@ -180,7 +183,8 @@ LoudFail(<span class="k">"my-agent"</span>, <span class="k">"~/.my-agent-loudfai
       dots+=`<circle cx="${mx(i).toFixed(1)}" cy="${my(i).toFixed(1)}" r="3" fill="var(--alive)"/><circle cx="${mx(i).toFixed(1)}" cy="${my(0).toFixed(1)}" r="3" fill="var(--dead)"/>`;}
     chart.innerHTML=base()+`<path d="${good.trim()}" fill="none" stroke="var(--alive)" stroke-width="2"/><path d="${bad.trim()}" fill="none" stroke="var(--dead)" stroke-width="2"/>`+dots;
   }
-  let timer; function run(){clearInterval(timer);let n=0;draw(0);timer=setInterval(()=>{n++;draw(n);if(n>=RUNS)clearInterval(timer);},320);}
+  const reduceMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let timer; function run(){clearInterval(timer);if(reduceMotion){draw(RUNS);return;}let n=0;draw(0);timer=setInterval(()=>{n++;draw(n);if(n>=RUNS)clearInterval(timer);},320);}
   document.getElementById("replay").addEventListener("click",run); run();
 
   /* viz 2 */
