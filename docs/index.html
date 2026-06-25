@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>agentliveness — a reliability harness for scheduled/autonomous agents</title>
+<meta name="description" content="Autonomous AI systems fail silently: fresh output over a dead engine. agentliveness is a small, dependency-free harness that persists state across runs, proves liveness (not just freshness), fails loud, and scans for the failure class before it ships. Predict less, detect more." />
+<meta property="og:title" content="agentliveness — predict less, detect more" />
+<meta property="og:description" content="A dependency-free reliability harness for scheduled/autonomous agents. Fresh output over a dead engine, made impossible to ship silently." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://agentliveness.anandsureshworks.dev/" />
+<link rel="canonical" href="https://agentliveness.anandsureshworks.dev/" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--s0:oklch(9% 0 0);--s1:oklch(13.5% 0 0);--s2:oklch(17% 0 0);--bd-sub:oklch(22% 0 0);--bd:oklch(28% 0 0);
+    --t1:oklch(96% 0 0);--t2:oklch(72% 0 0);--t3:oklch(56% 0 0);--accent:oklch(72% 0.18 145);
+    --alive:oklch(72% 0.13 240);--dead:oklch(63% 0.16 28);--warn:oklch(74% 0.13 70);
+    --sans:"Space Grotesk",system-ui,sans-serif;--mono:"Space Mono",monospace;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--s0);color:var(--t1);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:44rem;margin:0 auto;padding:2.4rem 1.25rem 4rem}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .kicker{font-family:var(--mono);font-size:.74rem;color:var(--accent)}
+  h1{font-size:2.1rem;font-weight:700;letter-spacing:-.02em;line-height:1.1;margin:.5rem 0 .5rem}
+  .dek{font-size:1.08rem;color:var(--t2);margin:0 0 1.2rem}
+  p{font-size:1.02rem;color:oklch(88% 0 0);margin:1.1rem 0}
+  h2{font-size:1.25rem;font-weight:600;margin:2.4rem 0 .2rem;letter-spacing:-.01em}
+  strong{color:var(--t1)}
+  em{color:var(--t1);font-style:italic}
+  code{font-family:var(--mono)}
+  blockquote{margin:1.4rem 0;padding:.2rem 0 .2rem 1.1rem;border-left:3px solid var(--accent);color:var(--t1);font-size:1.08rem}
+  figure{margin:1.6rem 0}
+  figcaption{font-size:.78rem;color:var(--t3);margin-top:.5rem;text-align:center}
+  .card{background:var(--s1);border:1px solid var(--bd-sub);border-radius:12px;padding:1.1rem}
+  button{font-family:var(--sans);font-weight:600;font-size:.78rem;border:1px solid color-mix(in oklch,var(--accent) 50%,transparent);background:color-mix(in oklch,var(--accent) 14%,transparent);color:var(--accent);border-radius:7px;padding:6px 12px;cursor:pointer}
+  button:hover{background:color-mix(in oklch,var(--accent) 24%,transparent)}
+  /* install block */
+  .install{background:var(--s1);border:1px solid var(--bd-sub);border-radius:12px;padding:1.1rem 1.2rem;margin:1.6rem 0}
+  .install .cmd{font-family:var(--mono);font-size:1rem;color:var(--alive);background:oklch(7% 0 0);border-radius:7px;padding:.7rem .9rem;display:flex;align-items:center;gap:.5rem}
+  .install .cmd::before{content:"$";color:var(--t3)}
+  .btns{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.9rem}
+  .btn{font-family:var(--sans);font-weight:600;font-size:.82rem;border:1px solid var(--bd);background:var(--s2);color:var(--t1);border-radius:7px;padding:.5rem .9rem}
+  .btn:hover{border-color:var(--accent);text-decoration:none}
+  .btn.primary{border-color:color-mix(in oklch,var(--accent) 50%,transparent);background:color-mix(in oklch,var(--accent) 14%,transparent);color:var(--accent)}
+  .tags{font-family:var(--mono);font-size:.72rem;color:var(--t3);margin-top:.8rem}
+  /* code */
+  pre{background:oklch(7% 0 0);border:1px solid var(--bd-sub);border-radius:10px;padding:.9rem 1rem;overflow-x:auto;font-family:var(--mono);font-size:.8rem;line-height:1.55;color:oklch(86% 0 0)}
+  pre .c{color:var(--t3)} pre .k{color:var(--alive)}
+  /* viz1 */
+  .tstrip{display:flex;gap:4px;margin-bottom:.5rem;flex-wrap:wrap}
+  .tcell{font-family:var(--mono);font-size:.6rem;color:var(--alive);border:1px solid color-mix(in oklch,var(--alive) 35%,transparent);border-radius:4px;padding:1px 5px;opacity:.25;transition:opacity .2s}
+  .tcell.on{opacity:1}
+  .legend{display:flex;gap:1.2rem;font-family:var(--mono);font-size:.72rem;margin:.6rem 0;flex-wrap:wrap}
+  .legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
+  /* viz2 */
+  .pipe{display:flex;flex-wrap:wrap;align-items:stretch;gap:.5rem}
+  .node{flex:1;min-width:8.5rem;background:var(--s2);border:1px solid var(--bd-sub);border-radius:10px;padding:.7rem .8rem}
+  .node .k{font-family:var(--mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
+  .node .n{font-weight:600;font-size:.9rem;margin:.15rem 0}.node .d{font-size:.74rem;color:var(--t2);line-height:1.4}
+  .node.shift{border-color:color-mix(in oklch,var(--accent) 40%,transparent)}
+  .arrow{align-self:center;color:var(--t3);font-family:var(--mono)}
+  /* viz3 */
+  .signs{display:flex;gap:.5rem;flex-wrap:wrap}
+  .sign{flex:1;min-width:8rem;border:1px solid var(--bd-sub);border-radius:10px;padding:.6rem .7rem;background:var(--s2);transition:border-color .2s}
+  .sign .num{font-family:var(--mono);font-size:.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
+  .sign .lbl{font-weight:600;font-size:.84rem;margin:.12rem 0}
+  .sign .code{font-family:var(--mono);font-size:.64rem;color:var(--t2);background:oklch(8% 0 0);border-radius:4px;padding:1px 5px;display:inline-block;margin:.1rem 0}
+  .sign .snote{font-size:.7rem;color:var(--t3);margin-top:.2rem}
+  .sign.bad{border-color:color-mix(in oklch,var(--dead) 55%,transparent)} .sign.bad .lbl{color:var(--dead)}
+  .sign.good{border-color:color-mix(in oklch,var(--alive) 55%,transparent)} .sign.good .lbl{color:var(--alive)}
+  .verdict{margin-top:.9rem;padding:.7rem .9rem;border-radius:10px;font-size:.88rem}
+  .verdict.bad{background:color-mix(in oklch,var(--dead) 12%,transparent);color:var(--dead);border:1px solid color-mix(in oklch,var(--dead) 38%,transparent)}
+  .verdict.good{background:color-mix(in oklch,var(--alive) 12%,transparent);color:var(--alive);border:1px solid color-mix(in oklch,var(--alive) 38%,transparent)}
+  .verdict b{color:var(--t1)}
+  .rtoggle{display:inline-flex;align-items:center;gap:.45rem;margin-top:.8rem;font-size:.82rem;color:var(--t1);cursor:pointer}
+  .dimm{color:var(--t3);font-family:var(--mono);font-size:.72rem}
+  footer{margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--bd-sub);font-family:var(--mono);font-size:.78rem;color:var(--t3)}
+  footer a{color:var(--t2)}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <p class="kicker">&gt;_ agentliveness</p>
+  <h1>Your scheduled agent can be dead for weeks while every check says it's fine.</h1>
+  <p class="dek">A small, dependency-free reliability harness for scheduled / autonomous agent systems. It persists state across runs, proves <em>liveness</em> — not just freshness — fails loud, and scans for the failure class <em>before it ships.</em></p>
+
+  <div class="install">
+    <div class="cmd">pip install agentliveness</div>
+    <div class="btns">
+      <a class="btn primary" href="https://github.com/anandsureshworks/agentliveness">GitHub ↗</a>
+      <a class="btn" href="https://pypi.org/project/agentliveness/">PyPI ↗</a>
+      <a class="btn" href="https://github.com/anandsureshworks/agentliveness#readme">Docs ↗</a>
+    </div>
+    <div class="tags">MIT · zero runtime dependencies · stdlib only · Python ≥ 3.9</div>
+  </div>
+
+  <h2>See the failure</h2>
+  <p>Under a scheduler — cron, launchd, a Kubernetes CronJob — <strong>every run is a fresh process.</strong> A counter initialized in <code>__init__</code> and held only in memory re-seeds to its starting value on every run. In a long-lived process it accumulates and everything looks right. In production it resets forever — and the <em>output keeps getting written</em>, so freshness checks pass with flying colors.</p>
+  <figure>
+    <div class="card">
+      <div class="tstrip" id="tstrip"></div>
+      <svg id="chart" viewBox="0 0 420 170" width="100%" style="max-width:440px"></svg>
+      <div class="legend">
+        <span><i style="background:var(--alive)"></i>persisted — accumulates 0→1→2…</span>
+        <span><i style="background:var(--dead)"></i>in-memory — resets to 0 every run</span>
+      </div>
+      <button id="replay">▶ run the scheduler</button>
+    </div>
+    <figcaption>Eight scheduled runs. The timestamp stays green the whole time, while the in-memory counter flatlines at 0.</figcaption>
+  </figure>
+  <blockquote>Freshness is not liveness. A fresh file over a dead producer passes every freshness check and fails the only one that matters.</blockquote>
+
+  <h2>The harness</h2>
+  <p>Four composing primitives. The first three run in production; the fourth shifts left and catches the failure statically.</p>
+  <figure>
+    <div class="card"><div class="pipe" id="pipe"></div></div>
+    <figcaption>persist → detect → respond → audit.</figcaption>
+  </figure>
+
+  <pre><span class="c"># 1 · persist — state that survives process death</span>
+<span class="k">from</span> agentliveness <span class="k">import</span> PersistentState
+st = PersistentState(<span class="k">"~/.myagent-state.json"</span>, default={<span class="k">"runs"</span>: 0})
+d = st.load(); d[<span class="k">"runs"</span>] += 1; st.save(d)   <span class="c"># atomic; survives restart</span>
+
+<span class="c"># 2 · detect — producing, not merely fresh</span>
+<span class="k">from</span> agentliveness <span class="k">import</span> LivenessContract
+c = LivenessContract(path=<span class="k">"~/.myagent.json"</span>, max_age_s=2*3600,
+                     producing=<span class="k">lambda</span> p: bool(p.get(<span class="k">"norms"</span>)))
+<span class="k">if not</span> c.evaluate().healthy: alert(...)   <span class="c"># "fresh but EMPTY"</span>
+
+<span class="c"># 3 · respond — fire once per incident, never crash the run</span>
+<span class="k">from</span> agentliveness <span class="k">import</span> LoudFail, log_sink, notify_sink
+LoudFail(<span class="k">"my-agent"</span>, <span class="k">"~/.my-agent-loudfail.json"</span>,
+         sinks=[log_sink(), notify_sink()]).report(c.evaluate())</pre>
+
+  <h2>Catch the whole class before it ships</h2>
+  <p><code>agentliveness audit</code> doesn't run your code — it reads its <em>shape</em> and looks for three structural signs that together <em>are</em> the failure class. No execution, no scheduler, no waiting weeks.</p>
+  <pre><span class="k">agentliveness audit</span> path/to/agent        <span class="c"># scan a file or directory</span>
+<span class="k">agentliveness audit</span> . --json             <span class="c"># machine-readable</span>
+<span class="k">agentliveness audit</span> . --exit-zero        <span class="c"># report only; don't fail CI</span></pre>
+  <figure>
+    <div class="card">
+      <div class="signs" id="signs"></div>
+      <div class="verdict" id="verdict"></div>
+      <label class="rtoggle"><input type="checkbox" id="restoreChk" /> restore it from disk <span class="dimm">(PersistentState)</span></label>
+    </div>
+    <figcaption>Flip the third sign — the verdict flips with it. No magic; just legible.</figcaption>
+  </figure>
+
+  <h2>Why this matters more, not less</h2>
+  <p>We're about to run more of the world on schedules, unattended, with agents in the loop. The dangerous failures won't be loud crashes — those you'll see. They'll be fresh timestamps over dead engines: outputs that look alive, checks that pass, and behaviour that quietly stopped working weeks ago. <strong>Predict less. Detect more.</strong></p>
+
+  <div class="install">
+    <div class="cmd">pip install agentliveness</div>
+    <div class="btns">
+      <a class="btn primary" href="https://github.com/anandsureshworks/agentliveness">GitHub ↗</a>
+      <a class="btn" href="https://pypi.org/project/agentliveness/">PyPI ↗</a>
+    </div>
+  </div>
+
+  <footer>
+    agentliveness · persist · detect · respond · audit · MIT ·
+    <a href="https://github.com/anandsureshworks/agentliveness">source</a> ·
+    part of <a href="https://anandsureshworks.dev">anandsureshworks.dev</a>
+  </footer>
+</main>
+
+<script type="module">
+  /* viz 1 */
+  const RUNS=8, chart=document.getElementById("chart"), tstrip=document.getElementById("tstrip");
+  const W=420,H=170,L=30,R=12,T=12,B=26, mx=i=>L+i/(RUNS-1)*(W-R-L), my=v=>T+(1-v/(RUNS-1))*(H-B-T);
+  const base=()=>`<line x1="${L}" y1="${my(0)}" x2="${W-R}" y2="${my(0)}" stroke="var(--bd)"/>`+
+    `<text x="${L-6}" y="${my(0)+3}" text-anchor="end" fill="var(--t3)" font-family="Space Mono" font-size="8">0</text>`+
+    `<text x="${L-6}" y="${my(RUNS-1)+3}" text-anchor="end" fill="var(--t3)" font-family="Space Mono" font-size="8">${RUNS-1}</text>`+
+    `<text x="${(L+W-R)/2}" y="${H-6}" text-anchor="middle" fill="var(--t3)" font-family="Space Mono" font-size="8">scheduled runs →</text>`;
+  function draw(n){
+    tstrip.innerHTML=Array.from({length:RUNS},(_,i)=>{const m=12*60+i*30,h=Math.floor(m/60)%24;return `<span class="tcell ${i<n?'on':''}">${String(h).padStart(2,'0')}:${String(m%60).padStart(2,'0')} ✓</span>`;}).join("");
+    let good="",bad="",dots="";
+    for(let i=0;i<n;i++){good+=(i?"L":"M")+mx(i).toFixed(1)+" "+my(i).toFixed(1)+" ";bad+=(i?"L":"M")+mx(i).toFixed(1)+" "+my(0).toFixed(1)+" ";
+      dots+=`<circle cx="${mx(i).toFixed(1)}" cy="${my(i).toFixed(1)}" r="3" fill="var(--alive)"/><circle cx="${mx(i).toFixed(1)}" cy="${my(0).toFixed(1)}" r="3" fill="var(--dead)"/>`;}
+    chart.innerHTML=base()+`<path d="${good.trim()}" fill="none" stroke="var(--alive)" stroke-width="2"/><path d="${bad.trim()}" fill="none" stroke="var(--dead)" stroke-width="2"/>`+dots;
+  }
+  let timer; function run(){clearInterval(timer);let n=0;draw(0);timer=setInterval(()=>{n++;draw(n);if(n>=RUNS)clearInterval(timer);},320);}
+  document.getElementById("replay").addEventListener("click",run); run();
+
+  /* viz 2 */
+  const NODES=[
+    {k:"persist",n:"PersistentState",d:"state survives the process — atomic, restart-safe"},
+    {k:"detect",n:"LivenessContract",d:"producing, not just fresh"},
+    {k:"respond",n:"LoudFail",d:"fire once per incident · never crash the run"},
+    {k:"audit",n:"agentliveness audit",d:"scan for the failure class — before it ships",shift:true},
+  ];
+  document.getElementById("pipe").innerHTML=NODES.map((x,i)=>`${i?'<span class="arrow">→</span>':''}<div class="node ${x.shift?'shift':''}"><div class="k">${x.k}</div><div class="n">${x.n}</div><div class="d">${x.d}</div></div>`).join("");
+
+  /* viz 3 */
+  const SIGNS=[{num:"① structural fact",lbl:"seeded fresh",code:"self.count = 0",note:"starts at zero in __init__"},
+               {num:"② structural fact",lbl:"accumulated",code:"self.count += 1",note:"grows across calls"}];
+  const signsEl=document.getElementById("signs"),verdictEl=document.getElementById("verdict"),chk=document.getElementById("restoreChk");
+  function renderSigns(){const r=chk.checked;
+    const s3=r?{num:"③ the decider",lbl:"restored ✓",code:"self.count = state.load()",note:"loaded back each run",good:true}
+              :{num:"③ the decider",lbl:"never restored",code:"# nothing loads it back",note:"no read from disk",bad:true};
+    signsEl.innerHTML=[{...SIGNS[0]},{...SIGNS[1]},s3].map(t=>`<div class="sign ${t.bad?'bad':t.good?'good':''}"><div class="num">${t.num}</div><div class="lbl">${t.lbl}</div><div class="code">${t.code}</div><div class="snote">${t.note}</div></div>`).join("");
+    verdictEl.className="verdict "+(r?"good":"bad");
+    verdictEl.innerHTML=r?"✓ Loaded back each run → it survives process death. <b>Safe — no finding.</b>"
+                         :"⚠ Under a scheduler every run is a fresh process → it resets to 0 every run. <b>Silent failure — flagged.</b>";}
+  chk.addEventListener("change",renderSigns); renderSigns();
+</script>
+</body>
+</html>

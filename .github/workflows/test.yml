@@ -1,0 +1,30 @@
+name: Tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.11", "3.13"]  # prove the >=3.9 floor
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install package + dev deps
+        run: pip install -e ".[dev]"
+      - name: Supply-chain gate — assert zero runtime dependencies
+        # agentliveness is stdlib-only by design. The strongest, un-foolable
+        # supply-chain guarantee is that it pulls in NOTHING at runtime — so
+        # there is no third-party closure to carry a CVE. This asserts the
+        # installed package's runtime requires list is empty; if a dependency
+        # is ever added, this gate fails until pip-audit coverage is added too.
+        run: |
+          python -c "import importlib.metadata as m; r = m.requires('agentliveness') or []; runtime = [x for x in r if 'extra ==' not in x]; print('runtime requires:', runtime); assert not runtime, f'unexpected runtime deps: {runtime}'"
+      - name: Run tests
+        run: pytest -v
