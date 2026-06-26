@@ -5,7 +5,6 @@ scanner is *pure static analysis* (no runtime/scheduler behaviour), so feeding i
 source and asserting on findings is the production model. The subprocess rule in
 CONTRIBUTING applies to restart/liveness behaviour, not to static analysis.
 """
-from pathlib import Path
 
 from agentliveness.audit import audit_source, audit_path
 
