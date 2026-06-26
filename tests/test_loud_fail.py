@@ -3,7 +3,7 @@ every tick (no alert fatigue); (2) a sink that raises must NEVER crash the run
 it protects; (3) composes with LivenessContract.
 """
 from agentliveness import (
-    LoudFail, LivenessContract, log_sink, exit_sink,
+    LoudFail, LivenessContract, exit_sink,
 )
 
 

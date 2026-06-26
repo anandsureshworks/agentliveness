@@ -39,7 +39,12 @@
 - Creates parent directories of the state path if missing.
 
 ## Reporting a Vulnerability
-This is a personal-project repository. Report issues privately to the maintainer.
+Please report suspected vulnerabilities **privately** via GitHub's private
+vulnerability reporting: the repository's **Security** tab → **Report a
+vulnerability** (enabled on this repo). That opens a private advisory thread with
+the maintainer — please do not open a public issue for a suspected vulnerability.
+Expect an acknowledgement within a few days.
+
 There is no network service to attack; the realistic surface is malformed input
 to `PersistentState.load` / `LivenessContract.evaluate`, both of which are
 designed to fail safe (return default / return a degraded verdict) or fail loud

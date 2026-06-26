@@ -34,7 +34,7 @@ Changelog = "https://github.com/anandsureshworks/agentliveness/blob/main/CHANGEL
 agentliveness = "agentliveness.audit:main"
 
 [project.optional-dependencies]
-dev = ["pytest>=7"]
+dev = ["pytest>=7", "ruff>=0.5"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

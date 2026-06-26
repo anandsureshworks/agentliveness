@@ -18,6 +18,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install package + dev deps
         run: pip install -e ".[dev]"
+      - name: Lint — static analysis (ruff)
+        run: ruff check src tests
       - name: Supply-chain gate — assert zero runtime dependencies
         # agentliveness is stdlib-only by design. The strongest, un-foolable
         # supply-chain guarantee is that it pulls in NOTHING at runtime — so

@@ -5,7 +5,6 @@ gap a freshness-only monitor (age < max) misses.
 import json
 import time
 
-import pytest
 
 from agentliveness import LivenessContract, PersistentState
 
