@@ -9,6 +9,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://agentliveness.anandsureshworks.dev/" />
 <link rel="canonical" href="https://agentliveness.anandsureshworks.dev/" />
+<link rel="icon" href="/icon.svg" type="image/svg+xml" />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{--s0:oklch(9% 0 0);--s1:oklch(13.5% 0 0);--s2:oklch(17% 0 0);--bd-sub:oklch(22% 0 0);--bd:oklch(28% 0 0);
@@ -22,7 +23,8 @@
   .skip-link:focus{left:0}
   a{color:var(--accent);text-decoration:none}
   a:hover{text-decoration:underline}
-  .kicker{font-family:var(--mono);font-size:.74rem;color:var(--accent)}
+  .kicker{font-family:var(--mono);font-size:.74rem;color:var(--accent);display:flex;align-items:center;gap:.4rem}
+  .kicker img{width:1.2em;height:1.2em;border-radius:3px}
   h1{font-size:2.1rem;font-weight:700;letter-spacing:-.02em;line-height:1.1;margin:.5rem 0 .5rem}
   .dek{font-size:1.08rem;color:var(--t2);margin:0 0 1.2rem}
   p{font-size:1.02rem;color:oklch(88% 0 0);margin:1.1rem 0}
@@ -83,7 +85,7 @@
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 <main class="wrap" id="main">
-  <p class="kicker">&gt;_ agentliveness</p>
+  <p class="kicker"><img src="/as-logo.svg" alt="">agentliveness</p>
   <h1>Your scheduled agent can be dead for weeks while every check says it's fine.</h1>
   <p class="dek">A small, dependency-free reliability harness for scheduled / autonomous agent systems. It persists state across runs, proves <em>liveness</em> — not just freshness — fails loud, and scans for the failure class <em>before it ships.</em></p>
 

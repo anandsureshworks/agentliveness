@@ -4,6 +4,12 @@ All notable changes to agentliveness are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); this project
 uses semantic versioning.
 
+## [Unreleased]
+### Changed
+- **Docs/site branding** — the landing page (`docs/`) now carries the woven AS
+  brand mark as its favicon and masthead, retiring the `>_` terminal glyph. Ties
+  the product page into the `anandsureshworks` family mark. No library changes.
+
 ## [0.4.0] — 2026-06-24
 ### Added
 - **Phase 4 — `agentliveness audit`**: a static scanner (stdlib `ast`, zero deps) that
