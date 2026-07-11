@@ -1,5 +1,7 @@
 # agentliveness
 
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13574/badge)](https://www.bestpractices.dev/projects/13574)
+
 **Autonomous AI systems fail silently — fresh output over a dead engine. Predict less, detect more.**
 
 A small, dependency-free reliability harness for scheduled / autonomous agent
