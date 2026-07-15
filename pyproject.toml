@@ -39,6 +39,18 @@ dev = ["pytest>=7", "ruff>=0.5"]
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.ruff.lint]
+# Default (E/F) plus flake8-bandit security rules (S) — static vuln scanning.
+extend-select = ["S"]
+# S404: importing subprocess is intentional (the loud_fail notification sink);
+# the one call site is individually justified with a targeted noqa.
+ignore = ["S404"]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests intentionally use bare asserts (pytest) and spawn real subprocesses —
+# the restart/liveness proofs are the whole point of the suite.
+"tests/**" = ["S101", "S603", "S607"]
+
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]

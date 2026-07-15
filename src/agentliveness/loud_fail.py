@@ -57,8 +57,8 @@ def notify_sink(title: str | None = None) -> Sink:
     failure here is swallowed by the caller's sink-guard, never raised."""
     def _sink(event: str, name: str, reason: str) -> None:
         msg = f"{name} {event}: {reason}"
-        subprocess.run(
-            ["osascript", "-e",
+        subprocess.run(  # noqa: S603 — static argv (no shell); message passed via env + `system attribute` (injection-safe, RCA-015)
+            ["osascript", "-e",  # noqa: S607 — osascript resolved via a controlled PATH (env below); portable/testable by design
              'display notification (system attribute "LF_MSG") '
              'with title (system attribute "LF_TITLE")'],
             env={"LF_MSG": msg, "LF_TITLE": title or "agentliveness", "PATH": _path()},
@@ -135,7 +135,7 @@ class LoudFail:
                 self.sink_errors.append(f"{sink}: {exc}")
                 try:
                     print(f"[loudfail] sink failed (swallowed): {exc}", file=sys.stderr)
-                except Exception:
+                except Exception:  # noqa: S110 — last-resort swallow: a failure in the failure-notifier must never propagate
                     pass
 
     def _coerce(self, verdict: Any) -> tuple[bool, str]:

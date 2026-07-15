@@ -5,6 +5,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); this project
 uses semantic versioning.
 
 ## [Unreleased]
+### Security
+- **Static security analysis (ruff flake8-bandit `S`)** — CI's `ruff check` now
+  runs the bandit ruleset, scanning for common vulnerability patterns on every
+  push/PR. Clean: the one intentional `subprocess` call (the loud_fail macOS
+  notification sink) and the last-resort sink-guard swallow carry targeted,
+  justified `noqa`s; tests keep bare asserts + real-subprocess spawns. Satisfies
+  OpenSSF `static_analysis_common_vulnerabilities`.
+
 ### Changed
 - **Docs/site branding** — the landing page (`docs/`) now carries the woven AS
   brand mark as its favicon and masthead, retiring the `>_` terminal glyph. Ties
